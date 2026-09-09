@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelly Criterion Experiments</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #0f0f1a; color: #e0e0e0; padding: 24px; }
+
+.page { max-width: 960px; margin: 0 auto; }
+
+.hero h1 { font-size: 30px; color: #fff; margin-bottom: 10px; }
+.hero h1 span { color: #e94560; }
+.hero .desc { font-size: 15px; color: #999; line-height: 1.7; margin-bottom: 24px; }
+.hero .desc a { color: #5b8def; text-decoration: none; }
+.hero .desc a:hover { text-decoration: underline; }
+
+.formula {
+  background: #16213e; border-radius: 8px; padding: 16px 20px;
+  margin-bottom: 28px; text-align: center;
+  font-size: 18px; color: #ddd; letter-spacing: 0.5px;
+}
+.formula .var { color: #e94560; font-style: italic; }
+
+h2 { font-size: 20px; color: #fff; margin: 32px 0 8px; }
+.section-desc { font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 16px; }
+
+.main-plot { width: 100%; border-radius: 8px; margin-bottom: 8px; }
+
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.gallery img {
+  width: 100%; border-radius: 6px; cursor: pointer;
+  transition: transform 0.15s;
+}
+.gallery img:hover { transform: scale(1.02); }
+
+.caption { font-size: 13px; color: #666; margin-bottom: 32px; }
+
+.footer { text-align: center; font-size: 13px; color: #555; padding: 24px 0; border-top: 1px solid #1e1e3a; margin-top: 16px; }
+.footer a { color: #5b8def; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+.overlay {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85); z-index: 100; cursor: zoom-out;
+  justify-content: center; align-items: center;
+}
+.overlay.active { display: flex; }
+.overlay img { max-width: 95%; max-height: 95%; border-radius: 8px; }
+
+@media (max-width: 640px) {
+  .gallery { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <section class="hero">
+    <h1>Kelly Criterion <span>Experiments</span></h1>
+    <p class="desc">
+      How much of your bankroll should you bet when you have an edge?
+      Bet too little and you leave growth on the table. Bet too much and a losing streak wipes you out.
+      The Kelly criterion gives the mathematically optimal answer — the fraction that maximizes long-run wealth growth.
+      <br><br>
+      This project implements the Kelly formula, simulates wealth trajectories across different bet-sizing strategies,
+      and visualizes why overbetting is just as dangerous as underbetting.
+      <br><a href="https://github.com/YangXiang-Dev/Kelly-experiments">View source on GitHub →</a>
+    </p>
+  </section>
+
+  <div class="formula">
+    <var class="var">f*</var> = <var class="var">p</var> − (1 − <var class="var">p</var>) / <var class="var">b</var>
+    &nbsp;&nbsp;&nbsp;
+    where <var class="var">p</var> = win probability, <var class="var">b</var> = net odds
+  </div>
+
+  <h2>Overview</h2>
+  <p class="section-desc">
+    Three plots in one figure: (1) optimal fraction vs win probability for different odds,
+    (2) optimal fraction vs odds for different probabilities,
+    (3) wealth evolution comparing no bet, ¼ Kelly, ½ Kelly, full Kelly, and 1.5× Kelly over 500 bets.
+  </p>
+  <img class="main-plot" src="kelly_criterion_plots.png" alt="Kelly Criterion overview plots" onclick="openImg(this)">
+
+  <h2>Monte Carlo Experiments</h2>
+  <p class="section-desc">
+    Each image below is an independent 50,000-bet simulation with a fresh random seed.
+    Curves range from 0.1× to 4× Kelly plus all-in.
+    Notice how 0.8× Kelly consistently dominates — and anything above 2× Kelly gets crushed by variance.
+    Click any image to enlarge.
+  </p>
+  <div class="gallery">
+    <img src="kelly_experiments/kelly_experiments_01.png" alt="Experiment 1" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_02.png" alt="Experiment 2" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_03.png" alt="Experiment 3" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_04.png" alt="Experiment 4" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_05.png" alt="Experiment 5" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_06.png" alt="Experiment 6" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_07.png" alt="Experiment 7" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_08.png" alt="Experiment 8" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_09.png" alt="Experiment 9" onclick="openImg(this)">
+    <img src="kelly_experiments/kelly_experiments_10.png" alt="Experiment 10" onclick="openImg(this)">
+  </div>
+  <p class="caption">10 independent runs · p = 0.995, b = 0.01, f* = 0.495 · log scale</p>
+
+  <div class="footer">
+    <a href="https://github.com/YangXiang-Dev/Kelly-experiments">View source on GitHub</a> &middot;
+    Python · NumPy · Matplotlib
+  </div>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="closeImg()">
+  <img id="overlayImg" src="" alt="">
+</div>
+
+<script>
+function openImg(el) {
+  document.getElementById('overlayImg').src = el.src;
+  document.getElementById('overlay').classList.add('active');
+}
+function closeImg() {
+  document.getElementById('overlay').classList.remove('active');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImg(); });
+</script>
+</body>
+</html>
