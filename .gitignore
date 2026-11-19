@@ -22,3 +22,9 @@ venv/
 Thumbs.db
 
 # Images are NOT ignored; kelly_experiments/*.png and kelly_criterion_plots.png are tracked.
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
